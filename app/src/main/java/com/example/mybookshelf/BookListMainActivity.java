@@ -1,5 +1,8 @@
 package com.example.mybookshelf;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -23,12 +27,44 @@ import java.util.ArrayList;
 public class BookListMainActivity extends AppCompatActivity {
 
     private BookAdapter adapter;
+    private ArrayList<Book> books;
+    private ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
+        if(null!=result){
+            Intent intent=result.getData();
+            if(null!=result&&result.getResultCode()==EditBookActivity.RESULT_CODE_SUCCESS){
+                Bundle bundle=intent.getExtras();
+                String title=bundle.getString("title");
+                int position=bundle.getInt("position");
+                int resourceid=bundle.getInt("image");
+
+                books.get(position).setTitle(title);
+                books.get(position).setResourceid(resourceid);
+                adapter.notifyItemChanged(position);
+            }
+        }
+    });
+    private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
+        if(null!=result){
+            Intent intent=result.getData();
+            if(null!=result&&result.getResultCode()==EditBookActivity.RESULT_CODE_SUCCESS){
+                Bundle bundle=intent.getExtras();
+                String title=bundle.getString("title");
+                int position=bundle.getInt("position");
+                int resourceid=bundle.getInt("image");
+                books.add(position,new Book(title,resourceid));
+                adapter.notifyItemInserted(position);
+//                books.get(position).setTitle(title);
+//                books.get(position).setResourceid(resourceid);
+//                adapter.notifyItemChanged(position);
+            }
+        }
+    });
 
     public ArrayList<Book> getBooks() {
         return books;
     }
 
-    private ArrayList<Book> books;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +85,26 @@ public class BookListMainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case 1:
-                books.add(item.getOrder(),new Book("创新工程实践",R.drawable.book_no_name));
-                adapter.notifyItemInserted(item.getOrder());
+//                Intent intent=new Intent(this,EditBookActivity.class);
+//                startActivity(intent);
+//                books.add(item.getOrder(),new Book("创新工程实践",R.drawable.book_no_name));
+//                adapter.notifyItemInserted(item.getOrder());
+                Intent intent=new Intent(this,EditBookActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putInt("position",item.getOrder());
+                intent.putExtras(bundle);
+                addResultLauncher.launch(intent);
                 break;
             case 2:
-                books.get(item.getOrder()).setTitle("updated");
-                adapter.notifyItemChanged(item.getOrder());
+                Intent intentupdate=new Intent(this,EditBookActivity.class);
+                Bundle bundleupdate=new Bundle();
+                bundleupdate.putInt("position",item.getOrder());
+                bundleupdate.putString("title",books.get(item.getOrder()).getTitle().toString());
+                bundleupdate.putInt("image",books.get(item.getOrder()).getResourceid());
+                intentupdate.putExtras(bundleupdate);
+                activityResultLauncher.launch(intentupdate);
+//                books.get(item.getOrder()).setTitle("updated");
+//                adapter.notifyItemChanged(item.getOrder());
                 break;
             case 3:
                 AlertDialog alertDialog=new AlertDialog.Builder(this).setTitle("Confirmation").setMessage("Are you sure to delete this book?").
