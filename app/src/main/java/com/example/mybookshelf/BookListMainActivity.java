@@ -21,11 +21,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mybookshelf.data.Book;
+import com.example.mybookshelf.data.DataSaver;
 
 import java.util.ArrayList;
 
 public class BookListMainActivity extends AppCompatActivity {
 
+    public static final int MENU_ADD = 1;
+    public static final int MENU_UPDATE = 2;
+    public static final int MENU_DELETE = 3;
     private BookAdapter adapter;
     private ArrayList<Book> books;
     private ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
@@ -39,6 +43,7 @@ public class BookListMainActivity extends AppCompatActivity {
 
                 books.get(position).setTitle(title);
                 books.get(position).setResourceid(resourceid);
+                new DataSaver().save(BookListMainActivity.this,books);
                 adapter.notifyItemChanged(position);
             }
         }
@@ -52,6 +57,7 @@ public class BookListMainActivity extends AppCompatActivity {
                 int position=bundle.getInt("position");
                 int resourceid=bundle.getInt("image");
                 books.add(position,new Book(title,resourceid));
+                new DataSaver().save(BookListMainActivity.this,books);
                 adapter.notifyItemInserted(position);
 //                books.get(position).setTitle(title);
 //                books.get(position).setResourceid(resourceid);
@@ -73,9 +79,14 @@ public class BookListMainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         books=new ArrayList<>();
-        books.add(new Book("信息安全数学基础(第2版)",R.drawable.book_1));
-        books.add(new Book("软件项目管理案例教程",R.drawable.book_2));
-
+//        books.add(new Book("信息安全数学基础(第2版)",R.drawable.book_1));
+//        books.add(new Book("软件项目管理案例教程",R.drawable.book_2));
+        DataSaver dataSaver=new DataSaver();
+//        dataSaver.save(this,books);
+        books=dataSaver.load(this);
+        if(books.size()==0){
+            books.add(new Book("信息安全数学基础(第2版)",R.drawable.book_1));
+        }
         adapter = new BookAdapter(books);
         recyclerView.setAdapter(adapter);
 
@@ -84,18 +95,15 @@ public class BookListMainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case 1:
-//                Intent intent=new Intent(this,EditBookActivity.class);
-//                startActivity(intent);
-//                books.add(item.getOrder(),new Book("创新工程实践",R.drawable.book_no_name));
-//                adapter.notifyItemInserted(item.getOrder());
+            case MENU_ADD:
+
                 Intent intent=new Intent(this,EditBookActivity.class);
                 Bundle bundle=new Bundle();
                 bundle.putInt("position",item.getOrder());
                 intent.putExtras(bundle);
                 addResultLauncher.launch(intent);
                 break;
-            case 2:
+            case MENU_UPDATE:
                 Intent intentupdate=new Intent(this,EditBookActivity.class);
                 Bundle bundleupdate=new Bundle();
                 bundleupdate.putInt("position",item.getOrder());
@@ -106,7 +114,7 @@ public class BookListMainActivity extends AppCompatActivity {
 //                books.get(item.getOrder()).setTitle("updated");
 //                adapter.notifyItemChanged(item.getOrder());
                 break;
-            case 3:
+            case MENU_DELETE:
                 AlertDialog alertDialog=new AlertDialog.Builder(this).setTitle("Confirmation").setMessage("Are you sure to delete this book?").
                         setNegativeButton("yes", new DialogInterface.OnClickListener() {
                             @Override

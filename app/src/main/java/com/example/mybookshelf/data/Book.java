@@ -1,8 +1,9 @@
 package com.example.mybookshelf.data;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Book {
+public class Book implements Serializable {
     public String getTitle() {
         return title;
     }
