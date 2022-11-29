@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookListMainActivity">
+    tools:context=".BookListMainActivity"
+    android:orientation="vertical">
+
    <androidx.recyclerview.widget.RecyclerView
        android:id="@+id/recycle_view_books"
        android:layout_width="wrap_content"
        android:layout_height="match_parent"
-       tools:ignore="MissingConstraints"/>
-    
+       tools:ignore="MissingConstraints" />
+   <com.google.android.material.floatingactionbutton.FloatingActionButton
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:id="@+id/add_book_button"
+       android:layout_gravity="end|bottom"
+       android:src="@drawable/add"
+       android:layout_margin="16dp"/>
 
 
-</LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

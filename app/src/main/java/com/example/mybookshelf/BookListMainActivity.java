@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,17 +12,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mybookshelf.data.Book;
 import com.example.mybookshelf.data.DataSaver;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -32,39 +40,109 @@ public class BookListMainActivity extends AppCompatActivity {
     public static final int MENU_DELETE = 3;
     private BookAdapter adapter;
     private ArrayList<Book> books;
-    private ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
-        if(null!=result){
-            Intent intent=result.getData();
-            if(null!=result&&result.getResultCode()==EditBookActivity.RESULT_CODE_SUCCESS){
-                Bundle bundle=intent.getExtras();
-                String title=bundle.getString("title");
-                int position=bundle.getInt("position");
-                int resourceid=bundle.getInt("image");
+    private Uri picUri;
+    private String title;
+    private String author;
+    private String publisher;
+    private int pubyear;
+    private int pubmonth;
+    private String isbn;
+    private String main_title="所有(1)";
+    private View bookself_num;
+//    private ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
+//        if(null!=result){
+//            Intent intent=result.getData();
+//            if(null!=result&&result.getResultCode()==EditBookActivity.RESULT_CODE_SUCCESS){
+//                Bundle bundle=intent.getExtras();
+//                String title=bundle.getString("title");
+//                int position=bundle.getInt("position");
+//                int resourceid=bundle.getInt("image");
+//
+//                books.get(position).setTitle(title);
+//                books.get(position).setResourceid(resourceid);
+//                new DataSaver().save(BookListMainActivity.this,books);
+//                adapter.notifyItemChanged(position);
+//            }
+//        }
+//    });
+private ActivityResultLauncher<Intent> updateResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
+    if(null!=result){
+        Intent intent=result.getData();
+        if(null!=result&&result.getResultCode()==BookEditActivity.RESULT_CODE_OK){
+            Bundle bundle=intent.getExtras();
+            int position=bundle.getInt("position");
+            picUri = Uri.parse(bundle.getString("imageUri"));
+            Log.d("www", "booklistactivity update: "+picUri.toString());
+            title = bundle.getString("title");
+            author = bundle.getString("author");
+            publisher = bundle.getString("publisher");
+            pubyear = bundle.getInt("pubyear");
+            pubmonth = bundle.getInt("pubmonth");
+            isbn = bundle.getString("isbn");
 
-                books.get(position).setTitle(title);
-                books.get(position).setResourceid(resourceid);
-                new DataSaver().save(BookListMainActivity.this,books);
-                adapter.notifyItemChanged(position);
-            }
+            books.get(position).setTitle(title);
+            books.get(position).setUri(picUri);
+            books.get(position).setAuthor(author);
+            books.get(position).setPublisher(publisher);
+            books.get(position).setPutyear(pubyear);
+            books.get(position).setPutmonth(pubmonth);
+            books.get(position).setIsbn(isbn);
+
+            new DataSaver().save(BookListMainActivity.this,books);
+            adapter.notifyItemChanged(position);
         }
-    });
-    private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
-        if(null!=result){
-            Intent intent=result.getData();
-            if(null!=result&&result.getResultCode()==EditBookActivity.RESULT_CODE_SUCCESS){
-                Bundle bundle=intent.getExtras();
-                String title=bundle.getString("title");
-                int position=bundle.getInt("position");
-                int resourceid=bundle.getInt("image");
-                books.add(position,new Book(title,resourceid));
-                new DataSaver().save(BookListMainActivity.this,books);
-                adapter.notifyItemInserted(position);
+    }
+});
+
+    private Bitmap bitmap;
+    //    private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
+//        if(null!=result){
+//            Intent intent=result.getData();
+//            if(null!=result&&result.getResultCode()==EditBookActivity.RESULT_CODE_SUCCESS){
+//                Bundle bundle=intent.getExtras();
+//                String title=bundle.getString("title");
+//                int position=bundle.getInt("position");
+//                int resourceid=bundle.getInt("image");
+//                books.add(position,new Book(title,resourceid));
+//                new DataSaver().save(BookListMainActivity.this,books);
+//                adapter.notifyItemInserted(position);
+////                books.get(position).setTitle(title);
+////                books.get(position).setResourceid(resourceid);
+////                adapter.notifyItemChanged(position);
+//            }
+//        }
+//    });
+private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
+    if(null!=result){
+        Intent intent=result.getData();
+        if(null!=result&&result.getResultCode()==BookEditActivity.RESULT_CODE_OK){
+            Bundle bundle=intent.getExtras();
+
+//            Uri picUri=intent.getData();
+            picUri = Uri.parse(bundle.getString("imageUri"));
+            bitmap = (Bitmap)bundle.getParcelable("image");
+            title = bundle.getString("title");
+            author = bundle.getString("author");
+            publisher = bundle.getString("publisher");
+            pubyear = bundle.getInt("pubyear");
+            pubmonth = bundle.getInt("pubmonth");
+            isbn = bundle.getString("isbn");
+
+//            int position=bundle.getInt("position");
+            int position=books.size();
+//            int position=1;
+//            int resourceid=bundle.getInt("image");
+            int resourceid=R.drawable.book_1;
+            Log.d("www", "booklistactivity add: "+picUri.toString());
+            books.add(new Book(title, picUri, author, pubyear, pubmonth, publisher, isbn));
+            new DataSaver().save(BookListMainActivity.this,books);
+            adapter.notifyItemInserted(position);
 //                books.get(position).setTitle(title);
 //                books.get(position).setResourceid(resourceid);
 //                adapter.notifyItemChanged(position);
-            }
         }
-    });
+    }
+});
 
     public ArrayList<Book> getBooks() {
         return books;
@@ -75,6 +153,14 @@ public class BookListMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list_main);
+        ActionBar supportActionBar = getSupportActionBar();
+//        supportActionBar.setDisplayShowHomeEnabled(false);
+//        supportActionBar.setDisplayShowTitleEnabled(false);
+//        supportActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        supportActionBar.setDisplayShowCustomEnabled(true);
+        supportActionBar.setTitle("Mybookshelf");
+
+
         RecyclerView recyclerView=(RecyclerView) findViewById(R.id.recycle_view_books);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -84,33 +170,61 @@ public class BookListMainActivity extends AppCompatActivity {
         DataSaver dataSaver=new DataSaver();
 //        dataSaver.save(this,books);
         books=dataSaver.load(this);
+        Log.d("www", "books size: "+books.size());
+
         if(books.size()==0){
-            books.add(new Book("信息安全数学基础(第2版)",R.drawable.book_1));
+            books.add(new Book("信息安全数学基础(第2版)",R.drawable.book_1,"张三",2019,6,"人民邮电出版社","9886541236580"));
         }
         adapter = new BookAdapter(books);
         recyclerView.setAdapter(adapter);
 
+        FloatingActionButton floatingActionButton=findViewById(R.id.add_book_button);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(v.getContext(),BookEditActivity.class);
+                Bundle bundle=new Bundle();
+//                bundle.putInt("position",item.getOrder());
+                intent.putExtras(bundle);
+                addResultLauncher.launch(intent);
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.book_list_menu,menu);
+        return true ;
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case MENU_ADD:
-
-                Intent intent=new Intent(this,EditBookActivity.class);
-                Bundle bundle=new Bundle();
-                bundle.putInt("position",item.getOrder());
-                intent.putExtras(bundle);
-                addResultLauncher.launch(intent);
-                break;
             case MENU_UPDATE:
-                Intent intentupdate=new Intent(this,EditBookActivity.class);
+                Intent intentupdate=new Intent(this,BookEditActivity.class);
                 Bundle bundleupdate=new Bundle();
                 bundleupdate.putInt("position",item.getOrder());
-                bundleupdate.putString("title",books.get(item.getOrder()).getTitle().toString());
-                bundleupdate.putInt("image",books.get(item.getOrder()).getResourceid());
+                bundleupdate.putString("title",books.get(item.getOrder()).getTitle());
+                bundleupdate.putString("author",books.get(item.getOrder()).getAuthor());
+                bundleupdate.putString("publisher",books.get(item.getOrder()).getPublisher());
+                bundleupdate.putInt("pubyear",books.get(item.getOrder()).getPutyear());
+                bundleupdate.putInt("pubmonth",books.get(item.getOrder()).getPutmonth());
+//                bundle.putString("pubyear",pubyearEditText.getText().toString());
+//                bundle.putString("pubmonth",pubmonthEditText.getText().toString());
+                bundleupdate.putString("isbn",books.get(item.getOrder()).getIsbn());
+//***                bundleupdate.putString("imageUri",books.get(item.getOrder()).getUri().toString());
+
+//                bundleupdate.putString("title",books.get(item.getOrder()).getTitle().toString());
+//                bundleupdate.putInt("image",books.get(item.getOrder()).getResourceid());
                 intentupdate.putExtras(bundleupdate);
-                activityResultLauncher.launch(intentupdate);
+                updateResultLauncher.launch(intentupdate);
 //                books.get(item.getOrder()).setTitle("updated");
 //                adapter.notifyItemChanged(item.getOrder());
                 break;
@@ -145,38 +259,71 @@ public class BookListMainActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
-            public void setTextView(TextView textView) {
-                this.textView = textView;
+
+
+
+
+
+            public ImageView getImageView() {
+                return imageView;
             }
 
             public void setImageView(ImageView imageView) {
                 this.imageView = imageView;
             }
 
-            public TextView getTextView() {
-                return textView;
+            public TextView getTitleview() {
+                return titleview;
             }
 
-            public ImageView getImageView() {
-                return imageView;
+            public void setTitleview(TextView titleview) {
+                this.titleview = titleview;
             }
 
-            private  TextView textView;
-            private  ImageView imageView;
+            public TextView getAuthorview() {
+                return authorview;
+            }
+
+            public void setAuthorview(TextView authorview) {
+                this.authorview = authorview;
+            }
+
+            public TextView getPublisherview() {
+                return publisherview;
+            }
+
+            public void setPublisherview(TextView publisherview) {
+                this.publisherview = publisherview;
+            }
+
+            public TextView getPubtimeview() {
+                return pubtimeview;
+            }
+
+            public void setPubtimeview(TextView pubtimeview) {
+                this.pubtimeview = pubtimeview;
+            }
+            private ImageView imageView;
+            private TextView titleview;
+            private TextView authorview;
+            private TextView publisherview;
+            private TextView pubtimeview;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
                 imageView = itemView.findViewById(R.id.image_view_book_cover);
-                textView = itemView.findViewById(R.id.text_view_book_title);
+                titleview = itemView.findViewById(R.id.text_view_book_title);
+                authorview=itemView.findViewById(R.id.text_view_author);
+                publisherview=itemView.findViewById(R.id.text_view_publisher);
+                pubtimeview=itemView.findViewById(R.id.text_view_pubtime);
                 itemView.setOnCreateContextMenuListener(this);
             }
 
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 
-                menu.add(0,1,getAdapterPosition(),"Add"+getAdapterPosition());
-                menu.add(0,2,getAdapterPosition(),"Update"+getAdapterPosition());
-                menu.add(0,3,getAdapterPosition(),"Delete"+getAdapterPosition());
+                menu.add(0,2,getAdapterPosition(),"Update");
+                menu.add(0,3,getAdapterPosition(),"Delete");
 
             }
         }
@@ -189,8 +336,14 @@ public class BookListMainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull BookAdapter.ViewHolder holder, int position) {
-            holder.getImageView().setImageResource(localDataSet.get(position).getResourceid());
-            holder.getTextView().setText(localDataSet.get(position).getTitle());
+//            holder.getImageView().setImageResource(localDataSet.get(position).getResourceid());
+            holder.getImageView().setImageURI(localDataSet.get(position).getUri());
+//            holder.getImageView().setImageBitmap(localDataSet.get(position).getBitmap());
+            holder.getTitleview().setText(localDataSet.get(position).getTitle());
+            holder.getAuthorview().setText(localDataSet.get(position).getAuthor());
+            holder.getPublisherview().setText(localDataSet.get(position).getPublisher());
+            String pubtime=localDataSet.get(position).getPutyear()+"-"+localDataSet.get(position).getPutmonth();
+            holder.getPubtimeview().setText(pubtime);
 
         }
 

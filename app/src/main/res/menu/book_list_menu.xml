@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item android:id="@+id/drawer_menu"
+        android:title="管理"
+        android:icon="@drawable/ic_baseline_menu_24"
+        app:showAsAction="always"/>
+    <item android:id="@+id/bookshelf_num"
+        android:title="所有(1)"
+        app:showAsAction="always"/>
+    <item android:id="@+id/book_droplist"
+        android:title="下拉列表"
+        android:icon="@drawable/ic_baseline_arrow_drop_down_24"
+        app:showAsAction="always"/>
+    <item android:id="@+id/book_search"
+        android:title="搜索"
+        android:icon="@drawable/ic_baseline_search_24"
+        app:showAsAction="always"/>
+    <item android:id="@+id/book_sort"
+        android:title="排序"
+        android:icon="@drawable/ic_baseline_sort_24"
+        app:showAsAction="always"/>
+
+</menu>
