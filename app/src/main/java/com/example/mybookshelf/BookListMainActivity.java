@@ -190,7 +190,9 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
                         return true;
                     case R.id.nav_setting:
 //                        drawerLayout.openDrawer(GravityCompat.START,true);
-                        Toast.makeText(BookListMainActivity.this, "设置", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(BookListMainActivity.this, "设置", Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent(BookListMainActivity.this,PreferenceSettingsActivity.class);
+                        startActivity(intent);
                         return true;
                     case R.id.nav_search:
 //                        drawerLayout.openDrawer(GravityCompat.START,true);

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="自动获取书籍详情">
+        <EditTextPreference
+
+            android:id="@+id/internett_servicer"
+            android:key="Setting1"
+            android:title="网络服务"/>
+        <SwitchPreference
+            android:key="Setting2"
+            android:checked="true"
+            android:title="自动填充网站栏"
+            android:summary=""
+            android:summaryOff="不填充网站栏"
+            android:summaryOn="填充网站栏" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="备份">
+        <EditTextPreference
+
+            android:key="Setting5"
+            android:title="备份应用"
+            />
+        <EditTextPreference
+
+            android:key="Setting6"
+            android:title="恢复应用"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="通用">
+        <SwitchPreference
+            android:key="Setting4"
+            android:checked="true"
+            android:title="启动时检查更新"
+            android:summary="不检查更新"
+            android:summaryOff="不检查更新"
+            android:summaryOn="检查更新" />
+    </PreferenceCategory>
+</PreferenceScreen>
