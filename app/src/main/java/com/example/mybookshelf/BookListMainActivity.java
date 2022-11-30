@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,10 +29,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
+//import android.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import com.example.mybookshelf.data.Book;
 import com.example.mybookshelf.data.DataSaver;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
@@ -143,6 +149,8 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
         }
     }
 });
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     public ArrayList<Book> getBooks() {
         return books;
@@ -154,11 +162,53 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list_main);
         ActionBar supportActionBar = getSupportActionBar();
+//        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+//        toolbar.setLogo(R.mipmap.ic_launcher);//设置app logo
+//        toolbar.setTitle("Title");//设置主标题
+//        toolbar.setSubtitle("Subtitle");//设置子标题
+//
+//        toolbar.inflateMenu(R.menu.book_list_menu);//设置右上角的填充菜单
+
 //        supportActionBar.setDisplayShowHomeEnabled(false);
 //        supportActionBar.setDisplayShowTitleEnabled(false);
 //        supportActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        supportActionBar.setDisplayShowCustomEnabled(true);
-        supportActionBar.setTitle("Mybookshelf");
+        navigationView = (NavigationView)findViewById(R.id.nav_view);
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId()){
+                    case R.id.nav_book:
+//                        drawerLayout.openDrawer(GravityCompat.START,true);
+//                        Toast.makeText(BookListMainActivity.this, "书籍", Toast.LENGTH_SHORT).show();
+                        drawerLayout.closeDrawer(GravityCompat.START);
+
+                        return true;
+                    case R.id.nav_label:
+//                        drawerLayout.openDrawer(GravityCompat.START,true);
+                        Toast.makeText(BookListMainActivity.this, "标签", Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_setting:
+//                        drawerLayout.openDrawer(GravityCompat.START,true);
+                        Toast.makeText(BookListMainActivity.this, "设置", Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.nav_search:
+//                        drawerLayout.openDrawer(GravityCompat.START,true);
+                        Toast.makeText(BookListMainActivity.this, "搜索", Toast.LENGTH_SHORT).show();
+                        return true;
+
+                    case R.id.nav_about:
+//                        drawerLayout.openDrawer(GravityCompat.START,true);
+                        Toast.makeText(BookListMainActivity.this, "关于", Toast.LENGTH_SHORT).show();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+//        drawerLayout.openDrawer(GravityCompat.START);
+       supportActionBar.setDisplayShowCustomEnabled(true);
+       supportActionBar.setTitle("Mybookshelf");
 
 
         RecyclerView recyclerView=(RecyclerView) findViewById(R.id.recycle_view_books);
@@ -190,14 +240,21 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             }
         });
     }
-
+//drawerLayout.openDrawer(GravityCompat.START);
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.drawer_menu:
+                drawerLayout.openDrawer(GravityCompat.START,true);
 
-        return super.onOptionsItemSelected(item);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
-    @Override
+   @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.book_list_menu,menu);

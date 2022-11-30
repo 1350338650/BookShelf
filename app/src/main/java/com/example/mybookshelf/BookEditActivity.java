@@ -237,21 +237,24 @@ public class BookEditActivity extends AppCompatActivity {
 
     }
     public void initspinner(){
+        final String[] spinnerItems1 = {"未读","阅读中","已读"};
+        final String[] spinnerItems2 = {"默认书架","添加新书架"};
         Spinner spinner1=(Spinner)findViewById(R.id.reading_status_spinner);
         Spinner spinner2=(Spinner)findViewById(R.id.book_shelf_spinner) ;
+
         spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String[] array2 = getResources().getStringArray(R.array.bookshelf);
-                switch (position){
-                    case 0:
-                        spinner1.setPrompt("默认书架");
-                        break;
-                    case 1:
-                        spinner1.setPrompt("添加新书架");
-                        break;
-
-                }
+//                switch (position){
+//                    case 0:
+//                        spinner1.setPrompt("默认书架");
+//                        break;
+//                    case 1:
+//                        spinner1.setPrompt("添加新书架");
+//                        break;
+//
+//                }
             }
 
             @Override
@@ -264,17 +267,17 @@ public class BookEditActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String[] array = getResources().getStringArray(R.array.languages);
-                switch (position){
-                    case 0:
-                        spinner1.setPrompt("未读");
-                        break;
-                    case 1:
-                        spinner1.setPrompt("阅读中");
-                        break;
-                    case 2:
-                        spinner1.setPrompt("已读");
-                        break;
-                }
+//                switch (position){
+//                    case 0:
+//                        spinner1.setPrompt("未读");
+//                        break;
+//                    case 1:
+//                        spinner1.setPrompt("阅读中");
+//                        break;
+//                    case 2:
+//                        spinner1.setPrompt("已读");
+//                        break;
+//                }
 
             }
 

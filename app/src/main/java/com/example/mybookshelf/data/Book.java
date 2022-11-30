@@ -140,7 +140,7 @@ public class Book implements Serializable, Parcelable {
     private int putyear;
     private int putmonth;
     private String publisher;
-
+    private  int readingStatus;
     public String getIsbn() {
         return isbn;
     }
@@ -167,8 +167,16 @@ public class Book implements Serializable, Parcelable {
 
     private String isbn;
     private boolean hasCover;
-    private int readingStatus;
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    private String note;
     public Uri getUri() {
         return uri;
     }
