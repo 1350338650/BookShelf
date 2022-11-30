@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="关于">
+        <EditTextPreference
+
+            android:key="Setting11"
+            android:title="BookShelf"
+            android:summary="1.6(12)"
+            />
+        <EditTextPreference
+            android:key="Setting12"
+            android:title="评分"
+            android:summary="如果觉得好用，请为我们打分" />
+        <EditTextPreference
+            android:key="Setting13"
+            android:title="开源项目"
+            android:summary="https://github.com/1350338650/BookShelf.git" />
+        <EditTextPreference
+            android:key="Setting14"
+            android:title="反馈"
+            android:summary="发送建议或反馈" />
+        <EditTextPreference
+            android:key="Setting15"
+            android:title="开源许可" />
+
+        <EditTextPreference
+            android:key="Setting15"
+            android:title="隐私政策" />
+        <EditTextPreference
+            android:key="Setting15"
+            android:title="使用条款" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

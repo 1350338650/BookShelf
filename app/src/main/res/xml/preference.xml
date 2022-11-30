@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+   android:key="preference_book">
     <PreferenceCategory android:title="自动获取书籍详情">
         <EditTextPreference
 
@@ -13,13 +14,17 @@
             android:summary=""
             android:summaryOff="不填充网站栏"
             android:summaryOn="填充网站栏" />
+
     </PreferenceCategory>
     <PreferenceCategory android:title="备份">
         <EditTextPreference
 
             android:key="Setting5"
             android:title="备份应用"
+
             />
+
+
         <EditTextPreference
 
             android:key="Setting6"

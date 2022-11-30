@@ -15,6 +15,9 @@
         android:theme="@style/Theme.MyBookShelf"
         tools:targetApi="31">
         <activity
+            android:name=".PreferenceAboutActivity"
+            android:exported="false" />
+        <activity
             android:name=".PreferenceSettingsActivity"
             android:exported="false" />
         <activity

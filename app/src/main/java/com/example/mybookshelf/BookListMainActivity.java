@@ -183,6 +183,7 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 //                        Toast.makeText(BookListMainActivity.this, "书籍", Toast.LENGTH_SHORT).show();
                         drawerLayout.closeDrawer(GravityCompat.START);
 
+
                         return true;
                     case R.id.nav_label:
 //                        drawerLayout.openDrawer(GravityCompat.START,true);
@@ -201,7 +202,9 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 
                     case R.id.nav_about:
 //                        drawerLayout.openDrawer(GravityCompat.START,true);
-                        Toast.makeText(BookListMainActivity.this, "关于", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(BookListMainActivity.this, "关于", Toast.LENGTH_SHORT).show();
+                        Intent intent2=new Intent(BookListMainActivity.this,PreferenceAboutActivity.class);
+                        startActivity(intent2);
                         return true;
                     default:
                         return false;
