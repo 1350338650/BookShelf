@@ -88,6 +88,17 @@ public class Book implements Serializable, Parcelable {
         this.publisher = publisher;
         this.isbn = isbn;
     }
+    public Book(String title, Uri uri, String author, int putyear, int putmonth, String publisher, String isbn,String label) {
+        this.title = title;
+//        this.resourceid = resourceid;
+        this.uri=uri;
+        this.author = author;
+        this.putyear = putyear;
+        this.putmonth = putmonth;
+        this.publisher = publisher;
+        this.isbn = isbn;
+        this.label=label;
+    }
 
 
     public String getAuthor() {
@@ -110,6 +121,23 @@ public class Book implements Serializable, Parcelable {
     private String  title;
     private int resourceid;
     private String author;
+    private int putyear;
+    private int putmonth;
+    private String publisher;
+    private  int readingStatus;
+    private String isbn;
+    private boolean hasCover;
+    private String note;
+    private Uri uri;
+    private String label;
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
 
     public Bitmap getBitmap() {
         return bitmap;
@@ -137,10 +165,7 @@ public class Book implements Serializable, Parcelable {
         this.putmonth = putmonth;
     }
 
-    private int putyear;
-    private int putmonth;
-    private String publisher;
-    private  int readingStatus;
+
     public String getIsbn() {
         return isbn;
     }
@@ -165,8 +190,8 @@ public class Book implements Serializable, Parcelable {
         this.readingStatus = readingStatus;
     }
 
-    private String isbn;
-    private boolean hasCover;
+
+
 
     public String getNote() {
         return note;
@@ -176,7 +201,7 @@ public class Book implements Serializable, Parcelable {
         this.note = note;
     }
 
-    private String note;
+
     public Uri getUri() {
         return uri;
     }
@@ -185,7 +210,7 @@ public class Book implements Serializable, Parcelable {
         this.uri = uri;
     }
 
-    private Uri uri;
+
 
     @Override
     public int describeContents() {

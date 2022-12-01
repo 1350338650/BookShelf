@@ -6,9 +6,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -31,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookEditActivity extends AppCompatActivity {
 
@@ -57,6 +61,9 @@ public class BookEditActivity extends AppCompatActivity {
     private Button button_ok;
     private int position;
     private Bitmap bitmap;
+    private EditText labelEditText;
+    public ArrayList<String> labels=new ArrayList<>();
+    private String booklabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,16 +77,18 @@ public class BookEditActivity extends AppCompatActivity {
         Bundle bundle=this.getIntent().getExtras();
 
         title = bundle.getString("title");
-
+        labels=getIntent().getStringArrayListExtra("label");
         if(title!=null){
             position = bundle.getInt("position",0);
 //**            picUri1 = Uri.parse(bundle.getString("imageUri"));
 //**            Log.d("www", "bookactivity update: "+picUri1.toString());
+
             author = bundle.getString("author");
             publisher = bundle.getString("publisher");
             pubyear = bundle.getInt("pubyear");
             pubmonth = bundle.getInt("pubmonth");
             isbn = bundle.getString("isbn");
+            booklabel=bundle.getString("booklabel");
 //**            coverImageView.setImageURI(picUri1);
             coverImageView.setImageResource(R.drawable.add2);
             titleEditText.setText(title);
@@ -88,6 +97,7 @@ public class BookEditActivity extends AppCompatActivity {
             pubyearEditText.setText(String.valueOf(pubyear));
             pubmonthEditText.setText(String.valueOf(pubmonth));
             isbnEditText.setText(isbn);
+            labelEditText.setText(booklabel);
         }
 //        Toolbar toolbar =findViewById(R.id.bookedit_toolbar);
 
@@ -182,7 +192,7 @@ public class BookEditActivity extends AppCompatActivity {
                 Intent intent=new Intent();
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 //                intent.addFlags(Intent.FLAG.ACTION_OPEN_DOCUMENT);
-
+                intent.putStringArrayListExtra("label",labels);
                 Bundle bundle=new Bundle();
                 bundle.putString("title",titleEditText.getText().toString());
                 bundle.putString("author",authorEditText.getText().toString());
@@ -193,6 +203,7 @@ public class BookEditActivity extends AppCompatActivity {
 //                bundle.putString("pubyear",pubyearEditText.getText().toString());
 //                bundle.putString("pubmonth",pubmonthEditText.getText().toString());
                 bundle.putString("isbn",isbnEditText.getText().toString());
+                bundle.putString("booklabel",booklabel);
 
                 bundle.putString("imageUri",picUri.toString());
 //                intent.putExtra("image",bitmap);
@@ -226,6 +237,70 @@ public class BookEditActivity extends AppCompatActivity {
     }
 
 
+    private int checkedItem = 0;
+    public void showdialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("选择标签：");
+//        labelEditText.setText("booklabel");
+        List<String> selectedlables = new ArrayList<>();
+        String[] labelsString = (String[]) labels.toArray(new String[0]);
+        builder.setSingleChoiceItems(labelsString, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+//                Log.d("wwww", "onClick: "+which);
+//                checkedItem = which;
+                booklabel = labels.get(which);
+//                Log.d("wwww", "onClick: "+booklabel);
+                labelEditText.setText(booklabel);
+//                labelEditText.setText("123");
+
+            }
+        });
+        //设置正面按钮
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+//                Toast.makeText(BookEditActivity.this, "确认"+booklabel, Toast.LENGTH_SHORT).show();
+//                labelEditText=findViewById(R.id.book_labels_edit_text);
+//                labelEditText.setText(booklabel);
+            }
+        });
+
+        builder.setNeutralButton("添加标签", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(BookEditActivity.this, "添加标签2", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(BookEditActivity.this);
+                final AlertDialog dialog2 = builder.create();
+                View dialogView = View.inflate(BookEditActivity.this, R.layout.labels_adddialog, null);
+                //设置对话框布局
+                dialog2.setView(dialogView);
+                dialog2.show();
+                EditText labelName = (EditText) dialogView.findViewById(R.id.label_name);
+                Button btnLogin = (Button) dialogView.findViewById(R.id.btn_login);
+                Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
+                btnLogin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String newlabelname = labelName.getText().toString();
+                        labels.add(newlabelname);
+                        dialog2.dismiss();
+                        showdialog();
+                    }
+                });
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog2.dismiss();
+                    }
+                });
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
     public void init(){
         coverImageView = findViewById(R.id.book_cover_image_view);
         titleEditText = (EditText) findViewById(R.id.book_title_edit_text);
@@ -234,7 +309,13 @@ public class BookEditActivity extends AppCompatActivity {
         pubyearEditText = (EditText) findViewById(R.id.book_pubyear_edit_text);
         pubmonthEditText = (EditText) findViewById(R.id.book_pubmonth_edit_text);
         isbnEditText = (EditText) findViewById(R.id.book_isbn_edit_text);
-
+        labelEditText = findViewById(R.id.book_labels_edit_text);
+        labelEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showdialog();
+            }
+        });
     }
     public void initspinner(){
         final String[] spinnerItems1 = {"未读","阅读中","已读"};

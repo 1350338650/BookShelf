@@ -1,7 +1,6 @@
 package com.example.mybookshelf;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -17,27 +16,28 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.widget.Toolbar;
-import androidx.appcompat.widget.Toolbar;
 import com.example.mybookshelf.data.Book;
 import com.example.mybookshelf.data.DataSaver;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BookListMainActivity extends AppCompatActivity {
 
@@ -55,6 +55,8 @@ public class BookListMainActivity extends AppCompatActivity {
     private String isbn;
     private String main_title="所有(1)";
     private View bookself_num;
+    public ArrayList<String>labels=new ArrayList<>();
+
 //    private ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
 //        if(null!=result){
 //            Intent intent=result.getData();
@@ -85,7 +87,8 @@ private ActivityResultLauncher<Intent> updateResultLauncher=registerForActivityR
             pubyear = bundle.getInt("pubyear");
             pubmonth = bundle.getInt("pubmonth");
             isbn = bundle.getString("isbn");
-
+            labels=intent.getStringArrayListExtra("label");
+            booklabel=bundle.getString("booklabel");
             books.get(position).setTitle(title);
             books.get(position).setUri(picUri);
             books.get(position).setAuthor(author);
@@ -101,6 +104,7 @@ private ActivityResultLauncher<Intent> updateResultLauncher=registerForActivityR
 });
 
     private Bitmap bitmap;
+    private String booklabel;
     //    private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
 //        if(null!=result){
 //            Intent intent=result.getData();
@@ -133,14 +137,15 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             pubyear = bundle.getInt("pubyear");
             pubmonth = bundle.getInt("pubmonth");
             isbn = bundle.getString("isbn");
-
+            labels=intent.getStringArrayListExtra("label");
+            booklabel = bundle.getString("booklabel");
 //            int position=bundle.getInt("position");
             int position=books.size();
 //            int position=1;
 //            int resourceid=bundle.getInt("image");
             int resourceid=R.drawable.book_1;
             Log.d("www", "booklistactivity add: "+picUri.toString());
-            books.add(new Book(title, picUri, author, pubyear, pubmonth, publisher, isbn));
+            books.add(new Book(title, picUri, author, pubyear, pubmonth, publisher, isbn, booklabel));
             new DataSaver().save(BookListMainActivity.this,books);
             adapter.notifyItemInserted(position);
 //                books.get(position).setTitle(title);
@@ -174,6 +179,9 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 //        supportActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         navigationView = (NavigationView)findViewById(R.id.nav_view);
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+//        labels.add("123");
+//        labels.add("1234");
+//        labels.add("12345");
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -186,8 +194,10 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 
                         return true;
                     case R.id.nav_label:
+
 //                        drawerLayout.openDrawer(GravityCompat.START,true);
-                        Toast.makeText(BookListMainActivity.this, "标签", Toast.LENGTH_SHORT).show();
+                        showdialog();
+//                        Toast.makeText(BookListMainActivity.this, "标签", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.nav_setting:
 //                        drawerLayout.openDrawer(GravityCompat.START,true);
@@ -241,10 +251,97 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
                 Bundle bundle=new Bundle();
 //                bundle.putInt("position",item.getOrder());
                 intent.putExtras(bundle);
+                intent.putStringArrayListExtra("label",labels);
                 addResultLauncher.launch(intent);
             }
         });
     }
+
+    private int checkedItem = 0;
+    public void showdialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("选择标签：");
+        List<String> selectedlables = new ArrayList<>();
+        String[] labelsString = (String[]) labels.toArray(new String[0]);
+        builder.setSingleChoiceItems(labelsString, checkedItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                checkedItem = which;
+            }
+        });
+        //设置正面按钮
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+       builder.setNeutralButton("添加标签", new DialogInterface.OnClickListener() {
+           @Override
+           public void onClick(DialogInterface dialog, int which) {
+               Toast.makeText(BookListMainActivity.this, "添加标签2", Toast.LENGTH_SHORT).show();
+               AlertDialog.Builder builder = new AlertDialog.Builder(BookListMainActivity.this);
+               final AlertDialog dialog2 = builder.create();
+               View dialogView = View.inflate(BookListMainActivity.this, R.layout.labels_adddialog, null);
+               //设置对话框布局
+               dialog2.setView(dialogView);
+               dialog2.show();
+               EditText labelName = (EditText) dialogView.findViewById(R.id.label_name);
+               Button btnLogin = (Button) dialogView.findViewById(R.id.btn_login);
+               Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
+               btnLogin.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       String newlabelname = labelName.getText().toString();
+                       labels.add(newlabelname);
+                       dialog2.dismiss();
+                       showdialog();
+                   }
+               });
+               btnCancel.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       dialog2.dismiss();
+                   }
+               });
+           }
+       });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+//    public void showCustomDialog(){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(BookListMainActivity.this);
+//        final AlertDialog dialog = builder.create();
+//        View dialogView = View.inflate(BookListMainActivity.this, R.layout.labels_adddialog, null);
+//        //设置对话框布局
+//        dialog.setView(dialogView);
+//        dialog.show();
+//        EditText etName = (EditText) dialogView.findViewById(R.id.label_name);
+//        final String name = etName.getText().toString();
+//        Button btnLogin = (Button) dialogView.findViewById(R.id.btn_login);
+//        Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
+//        btnLogin.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (TextUtils.isEmpty(name) && TextUtils.isEmpty(pwd)) {
+//                    Toast.makeText(context, "用户名和密码均不能为空", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                Log.e(TAG, "用户名：" + name);
+//                Log.e(TAG, "密码：" + pwd);
+//                dialog.dismiss();
+//            }
+//        });
+//        btnCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//    }
 //drawerLayout.openDrawer(GravityCompat.START);
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -271,6 +368,7 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
         switch (item.getItemId()){
             case MENU_UPDATE:
                 Intent intentupdate=new Intent(this,BookEditActivity.class);
+                intentupdate.putStringArrayListExtra("label",labels);
                 Bundle bundleupdate=new Bundle();
                 bundleupdate.putInt("position",item.getOrder());
                 bundleupdate.putString("title",books.get(item.getOrder()).getTitle());
@@ -281,6 +379,7 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 //                bundle.putString("pubyear",pubyearEditText.getText().toString());
 //                bundle.putString("pubmonth",pubmonthEditText.getText().toString());
                 bundleupdate.putString("isbn",books.get(item.getOrder()).getIsbn());
+                bundleupdate.putString("booklabel",booklabel);
 //***                bundleupdate.putString("imageUri",books.get(item.getOrder()).getUri().toString());
 
 //                bundleupdate.putString("title",books.get(item.getOrder()).getTitle().toString());
