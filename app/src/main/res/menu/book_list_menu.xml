@@ -7,10 +7,11 @@
         android:icon="@drawable/ic_baseline_menu_24"
         app:showAsAction="always"/>
     <item android:id="@+id/bookshelf_num"
-        android:title="所有(1)"
+        android:title="所有"
         app:showAsAction="always"/>
     <item android:id="@+id/book_droplist"
         android:title="下拉列表"
+        android:entries="@array/bookshelf"
         android:icon="@drawable/ic_baseline_arrow_drop_down_24"
         app:showAsAction="always"/>
     <item android:id="@+id/book_search"

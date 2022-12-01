@@ -88,7 +88,7 @@ public class Book implements Serializable, Parcelable {
         this.publisher = publisher;
         this.isbn = isbn;
     }
-    public Book(String title, Uri uri, String author, int putyear, int putmonth, String publisher, String isbn,String label) {
+    public Book(String title, Uri uri, String author, int putyear, int putmonth, String publisher, String isbn,String label,int readingStatus,String note) {
         this.title = title;
 //        this.resourceid = resourceid;
         this.uri=uri;
@@ -98,6 +98,8 @@ public class Book implements Serializable, Parcelable {
         this.publisher = publisher;
         this.isbn = isbn;
         this.label=label;
+        this.readingStatus=readingStatus;
+        this.note=note;
     }
 
 

@@ -25,9 +25,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.widget.Toolbar;
@@ -53,9 +55,13 @@ public class BookListMainActivity extends AppCompatActivity {
     private int pubyear;
     private int pubmonth;
     private String isbn;
-    private String main_title="所有(1)";
+    private String main_title="所有";
     private View bookself_num;
     public ArrayList<String>labels=new ArrayList<>();
+    private Bitmap bitmap;
+    private String booklabel;
+    private int readingstatus;
+    private String note;
 
 //    private ActivityResultLauncher<Intent> activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
 //        if(null!=result){
@@ -89,6 +95,8 @@ private ActivityResultLauncher<Intent> updateResultLauncher=registerForActivityR
             isbn = bundle.getString("isbn");
             labels=intent.getStringArrayListExtra("label");
             booklabel=bundle.getString("booklabel");
+            readingstatus = bundle.getInt("readingstatus",0);
+            note = bundle.getString("note");
             books.get(position).setTitle(title);
             books.get(position).setUri(picUri);
             books.get(position).setAuthor(author);
@@ -96,15 +104,16 @@ private ActivityResultLauncher<Intent> updateResultLauncher=registerForActivityR
             books.get(position).setPutyear(pubyear);
             books.get(position).setPutmonth(pubmonth);
             books.get(position).setIsbn(isbn);
-
+            books.get(position).setNote(note);
+            books.get(position).setReadingStatus(readingstatus);
+            books.get(position).setLabel(booklabel);
             new DataSaver().save(BookListMainActivity.this,books);
             adapter.notifyItemChanged(position);
         }
     }
 });
 
-    private Bitmap bitmap;
-    private String booklabel;
+
     //    private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),result ->  {
 //        if(null!=result){
 //            Intent intent=result.getData();
@@ -139,13 +148,16 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             isbn = bundle.getString("isbn");
             labels=intent.getStringArrayListExtra("label");
             booklabel = bundle.getString("booklabel");
+            readingstatus = bundle.getInt("readingstatus",0);
+            note = bundle.getString("note");
+            Log.d("wwww", "note: "+note);
 //            int position=bundle.getInt("position");
             int position=books.size();
 //            int position=1;
 //            int resourceid=bundle.getInt("image");
             int resourceid=R.drawable.book_1;
             Log.d("www", "booklistactivity add: "+picUri.toString());
-            books.add(new Book(title, picUri, author, pubyear, pubmonth, publisher, isbn, booklabel));
+            books.add(new Book(title, picUri, author, pubyear, pubmonth, publisher, isbn, booklabel,readingstatus,note));
             new DataSaver().save(BookListMainActivity.this,books);
             adapter.notifyItemInserted(position);
 //                books.get(position).setTitle(title);
@@ -179,6 +191,10 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 //        supportActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         navigationView = (NavigationView)findViewById(R.id.nav_view);
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        Spinner spinner=findViewById(R.id.book_droplist);
+//        adapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item);
+//        spinnerItems.setAdapter(adapter);
+//        spinner.add
 //        labels.add("123");
 //        labels.add("1234");
 //        labels.add("12345");
@@ -350,6 +366,9 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
                 drawerLayout.openDrawer(GravityCompat.START,true);
 
                 return true;
+            case R.id.book_droplist:
+
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -379,7 +398,9 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 //                bundle.putString("pubyear",pubyearEditText.getText().toString());
 //                bundle.putString("pubmonth",pubmonthEditText.getText().toString());
                 bundleupdate.putString("isbn",books.get(item.getOrder()).getIsbn());
-                bundleupdate.putString("booklabel",booklabel);
+                bundleupdate.putString("booklabel",books.get(item.getOrder()).getLabel());
+                bundleupdate.putInt("readingstatus",books.get(item.getOrder()).getReadingStatus());
+                bundleupdate.putString("note",books.get(item.getOrder()).getNote());
 //***                bundleupdate.putString("imageUri",books.get(item.getOrder()).getUri().toString());
 
 //                bundleupdate.putString("title",books.get(item.getOrder()).getTitle().toString());

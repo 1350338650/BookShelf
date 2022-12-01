@@ -63,9 +63,9 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="16dp"
-                        android:entries="@array/languages"
                         android:layout_toEndOf="@+id/book_edit_readingstatus_image_view"
                         android:backgroundTint="@color/colorSecondaryText"
+                        android:entries="@array/languages"
                         android:spinnerMode="dropdown" />
 
                 </RelativeLayout>

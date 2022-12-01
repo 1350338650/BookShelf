@@ -64,6 +64,11 @@ public class BookEditActivity extends AppCompatActivity {
     private EditText labelEditText;
     public ArrayList<String> labels=new ArrayList<>();
     private String booklabel;
+    private int readingstatus;
+    private String  note;
+    private EditText noteEditText;
+    private Spinner spinner1;
+    private Spinner spinner2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +94,9 @@ public class BookEditActivity extends AppCompatActivity {
             pubmonth = bundle.getInt("pubmonth");
             isbn = bundle.getString("isbn");
             booklabel=bundle.getString("booklabel");
+            note=bundle.getString("note");
+
+            readingstatus=bundle.getInt("readingstatus",0);
 //**            coverImageView.setImageURI(picUri1);
             coverImageView.setImageResource(R.drawable.add2);
             titleEditText.setText(title);
@@ -98,6 +106,9 @@ public class BookEditActivity extends AppCompatActivity {
             pubmonthEditText.setText(String.valueOf(pubmonth));
             isbnEditText.setText(isbn);
             labelEditText.setText(booklabel);
+            noteEditText.setText(note);
+            spinner1.setSelection(readingstatus);
+
         }
 //        Toolbar toolbar =findViewById(R.id.bookedit_toolbar);
 
@@ -197,6 +208,8 @@ public class BookEditActivity extends AppCompatActivity {
                 bundle.putString("title",titleEditText.getText().toString());
                 bundle.putString("author",authorEditText.getText().toString());
                 bundle.putString("publisher",publisherEditText.getText().toString());
+                bundle.putString("note",noteEditText.getText().toString());
+                bundle.putInt("readingstatus",readingstatus);
                 bundle.putInt("position",position);
                 bundle.putInt("pubyear",Integer.parseInt(pubyearEditText.getText().toString()));
                 bundle.putInt("pubmonth",Integer.parseInt(pubmonthEditText.getText().toString()));
@@ -309,6 +322,7 @@ public class BookEditActivity extends AppCompatActivity {
         pubyearEditText = (EditText) findViewById(R.id.book_pubyear_edit_text);
         pubmonthEditText = (EditText) findViewById(R.id.book_pubmonth_edit_text);
         isbnEditText = (EditText) findViewById(R.id.book_isbn_edit_text);
+        noteEditText = (EditText)findViewById(R.id.book_notes_edit_text);
         labelEditText = findViewById(R.id.book_labels_edit_text);
         labelEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -320,8 +334,8 @@ public class BookEditActivity extends AppCompatActivity {
     public void initspinner(){
         final String[] spinnerItems1 = {"未读","阅读中","已读"};
         final String[] spinnerItems2 = {"默认书架","添加新书架"};
-        Spinner spinner1=(Spinner)findViewById(R.id.reading_status_spinner);
-        Spinner spinner2=(Spinner)findViewById(R.id.book_shelf_spinner) ;
+        spinner1 = (Spinner)findViewById(R.id.reading_status_spinner);
+        spinner2 = (Spinner)findViewById(R.id.book_shelf_spinner);
 
         spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -347,7 +361,9 @@ public class BookEditActivity extends AppCompatActivity {
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String[] array = getResources().getStringArray(R.array.languages);
+//                String[] array = getResources().getStringArray(R.array.languages);
+                Log.d("wwww", "onItemSelected: "+position);
+                readingstatus = position;
 //                switch (position){
 //                    case 0:
 //                        spinner1.setPrompt("未读");
