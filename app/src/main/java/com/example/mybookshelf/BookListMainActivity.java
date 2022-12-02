@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -168,11 +169,19 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
 });
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private AdapterView.OnItemClickListener mOnItemClickListener;
+    private RecyclerView recyclerView;
 
     public ArrayList<Book> getBooks() {
         return books;
     }
 
+//    public interface OnItemClickListener {
+//        void onItemClick(View view, int position);//单击
+//    }
+//    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+//        mOnItemClickListener = (AdapterView.OnItemClickListener) onItemClickListener;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +251,7 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
        supportActionBar.setTitle("Mybookshelf");
 
 
-        RecyclerView recyclerView=(RecyclerView) findViewById(R.id.recycle_view_books);
+        recyclerView = (RecyclerView) findViewById(R.id.recycle_view_books);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         books=new ArrayList<>();
@@ -257,6 +266,9 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             books.add(new Book("信息安全数学基础(第2版)",R.drawable.book_1,"张三",2019,6,"人民邮电出版社","9886541236580"));
         }
         adapter = new BookAdapter(books);
+
+
+
         recyclerView.setAdapter(adapter);
 
         FloatingActionButton floatingActionButton=findViewById(R.id.add_book_button);
@@ -272,6 +284,7 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             }
         });
     }
+
 
     private int checkedItem = 0;
     public void showdialog(){
@@ -432,6 +445,25 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
         return super.onContextItemSelected(item);
     }
 
+    public void bookClick(View view) {
+        int position = recyclerView.getChildAdapterPosition(view);
+        Intent intent=new Intent(BookListMainActivity.this,BookDetailActivity.class);
+        intent.putStringArrayListExtra("label",labels);
+        String pubtime=books.get(position).getPutyear()+"-"+books.get(position).getPutmonth();
+        Bundle bundle=new Bundle();
+        bundle.putString("title",books.get(position).getTitle());
+        bundle.putString("author",books.get(position).getAuthor());
+        bundle.putString("publisher",books.get(position).getPublisher());
+        bundle.putString("pubtime",pubtime);
+        bundle.putString("isbn",books.get(position).getIsbn());
+        bundle.putString("booklabel",books.get(position).getLabel());
+        bundle.putInt("readingstatus",books.get(position).getReadingStatus());
+        bundle.putString("note",books.get(position).getNote());
+
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
     public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder>{
         private ArrayList<Book> localDataSet;
 
@@ -527,6 +559,7 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             String pubtime=localDataSet.get(position).getPutyear()+"-"+localDataSet.get(position).getPutmonth();
             holder.getPubtimeview().setText(pubtime);
 
+//            holder.setOnClickListener
         }
 
         @Override
