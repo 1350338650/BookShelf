@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.mybookshelf">
 
+    package="com.example.mybookshelf">
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -25,6 +27,7 @@
             android:exported="false" />
         <activity
             android:name=".BookSearchActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".BookEditActivity"

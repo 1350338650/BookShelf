@@ -5,13 +5,17 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +35,13 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+//import com.google.zxing.integration.android.IntentIntegrator;
+//import com.google.zxing.integration.android.IntentResult;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -237,10 +248,89 @@ public class BookEditActivity extends AppCompatActivity {
             case android.R.id.home:
                 BookEditActivity.this.finish();
                 return true;
+            case R.id.book_scanning:
+//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
+//                    return true;
+//                }
+//                //申请文件(相册)读写权限
+//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+//                    return true;
+//                }
+                //二维码扫码
+                //然后通过Intent机制启动zxing框架的CaptureActivity，请求返回结果
+                Intent intent2 = new Intent(BookEditActivity.this, CaptureActivity.class);
+                startActivityForResult(intent2, 1111);
+
+//                Intent intent2 = new Intent(this, CaptureActivity.class);
+//                startActivityForResult(intent2, 100);
+
+//                Intent intent2 = new Intent(this, BookEditActivity.class);
+//                startActivityForResult(intent2,100);
+//                IntentIntegrator intentIntegrator = new IntentIntegrator(BookEditActivity.this);
+//                // 开始扫描
+//                intentIntegrator.initiateScan();
+//                ScanCodeConfig.create(BookEditActivity.this)
+//                        //设置扫码页样式 ScanStyle.NONE：无  ScanStyle.QQ ：仿QQ样式   ScanStyle.WECHAT ：仿微信样式    ScanStyle.CUSTOMIZE ： 自定义样式
+//                        .setStyle( ScanStyle.WECHAT)
+//                        //扫码成功是否播放音效  true ： 播放   false ： 不播放
+//                        .setPlayAudio(false)
+//                        .buidler()
+//                        //跳转扫码页   扫码页可自定义样式
+//                        .start(ScanCodeActivity.class);
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1111) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(BookEditActivity.this);
+            builder.setTitle("无法获取详情");
+            builder.setMessage("无法获取图书详情，请选择手动加入");
+            builder.setCancelable(true);
+            //设置正面按钮
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+//                    Intent intent=new Intent(,BookEditActivity.class);
+//                    startActivity(intent);
+//                    CaptureActivity.finish();
+                    dialog.dismiss();
+                }
+            });
+            //设置反面按钮
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+
+            //显示对话框
+            dialog.show();
+
+
+
+//            if (data != null) {
+//
+//                String content = data.getStringExtra(Constant.CODED_CONTENT);
+//                Log.i("扫描结果为:", content);
+//
+//                scanFragment.onActivityResult(requestCode, resultCode, data);
+//
+//            }
+        }
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
