@@ -66,8 +66,8 @@ public class BookEditActivity extends AppCompatActivity {
     private String title1;
     private String author;
     private String publisher;
-    private int pubyear;
-    private int pubmonth;
+    private int pubyear=2020;
+    private int pubmonth=9;
     private String isbn;
     private Button button_ok;
     private int position;
@@ -80,6 +80,7 @@ public class BookEditActivity extends AppCompatActivity {
     private EditText noteEditText;
     private Spinner spinner1;
     private Spinner spinner2;
+    public int isuri=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +102,8 @@ public class BookEditActivity extends AppCompatActivity {
 
             author = bundle.getString("author");
             publisher = bundle.getString("publisher");
-            pubyear = bundle.getInt("pubyear");
-            pubmonth = bundle.getInt("pubmonth");
+            pubyear = bundle.getInt("pubyear",2020);
+            pubmonth = bundle.getInt("pubmonth",9);
             isbn = bundle.getString("isbn");
             booklabel=bundle.getString("booklabel");
             note=bundle.getString("note");
@@ -147,6 +148,7 @@ public class BookEditActivity extends AppCompatActivity {
 
                     if(picUri!=null){
                         coverImageView.setImageURI(picUri);
+                        isuri=1;
                         Log.d("ning", "picUri: "+picUri.toString());
                     }
                 }
@@ -215,6 +217,8 @@ public class BookEditActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 //                intent.addFlags(Intent.FLAG.ACTION_OPEN_DOCUMENT);
                 intent.putStringArrayListExtra("label",labels);
+                intent.addCategory(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 Bundle bundle=new Bundle();
                 bundle.putString("title",titleEditText.getText().toString());
                 bundle.putString("author",authorEditText.getText().toString());
@@ -222,17 +226,26 @@ public class BookEditActivity extends AppCompatActivity {
                 bundle.putString("note",noteEditText.getText().toString());
                 bundle.putInt("readingstatus",readingstatus);
                 bundle.putInt("position",position);
-                bundle.putInt("pubyear",Integer.parseInt(pubyearEditText.getText().toString()));
-                bundle.putInt("pubmonth",Integer.parseInt(pubmonthEditText.getText().toString()));
+                int pubyear=pubyearEditText.getText().toString().isEmpty()?2020:Integer.parseInt(pubyearEditText.getText().toString());
+                int pubmonth=pubmonthEditText.getText().toString().isEmpty()?9:Integer.parseInt(pubmonthEditText.getText().toString());
+
+//                bundle.putInt("pubyear",Integer.parseInt(pubyearEditText.getText().toString()));
+                bundle.putInt("pubyear",pubyear);
+                bundle.putInt("pubmonth",pubmonth);
+//                bundle.putInt("pubmonth",Integer.parseInt(pubmonthEditText.getText().toString()));
 //                bundle.putString("pubyear",pubyearEditText.getText().toString());
 //                bundle.putString("pubmonth",pubmonthEditText.getText().toString());
                 bundle.putString("isbn",isbnEditText.getText().toString());
                 bundle.putString("booklabel",booklabel);
 
-                bundle.putString("imageUri",picUri.toString());
+                if(isuri==1) {
+                    bundle.putString("imageUri", picUri.toString());
+                    Log.d("www", "bookactivity add: "+picUri.toString());
+                }
+                bundle.putInt("isuri",isuri);
 //                intent.putExtra("image",bitmap);
 
-                Log.d("www", "bookactivity add: "+picUri.toString());
+
 //                intent.putExtra("imageUri",picUri.toString());
 
 

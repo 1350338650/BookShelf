@@ -62,7 +62,8 @@ public class BookDetailActivity extends AppCompatActivity {
             booklabel=bundle.getString("booklabel");
             note=bundle.getString("note");
             readingstatus=bundle.getInt("readingstatus",0);
-//**            coverImageView.setImageURI(picUri1);
+//**            picUri=Uri.parse(bundle.getString("image"));
+//**            coverImageView.setImageURI(picUri);
 //            coverImageView.setImageResource(R.drawable.add2);
             titleText.setText(title);
             authorText.setText(author);
@@ -72,6 +73,7 @@ public class BookDetailActivity extends AppCompatActivity {
             labelText.setText(booklabel);
             noteText.setText(note);
             readingstatusText.setText(status[readingstatus]);
+//**            coverImageView.setImageURI(picUri);
 
 
         }

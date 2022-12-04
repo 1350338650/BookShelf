@@ -102,7 +102,20 @@ public class Book implements Serializable, Parcelable {
         this.note=note;
     }
 
-
+    public Book(String title, Uri uri, String author, int putyear, int putmonth, String publisher, String isbn,String label,int readingStatus,String note,int isuri) {
+        this.title = title;
+//        this.resourceid = resourceid;
+        this.uri=uri;
+        this.author = author;
+        this.putyear = putyear;
+        this.putmonth = putmonth;
+        this.publisher = publisher;
+        this.isbn = isbn;
+        this.label=label;
+        this.readingStatus=readingStatus;
+        this.note=note;
+        this.isuri=isuri;
+    }
     public String getAuthor() {
         return author;
     }
@@ -132,6 +145,16 @@ public class Book implements Serializable, Parcelable {
     private String note;
     private Uri uri;
     private String label;
+    private int isuri=0;
+    public int getIsUri() {
+        return isuri;
+    }
+
+    public void setIsUri(int isUri) {
+        this.isuri = isUri;
+    }
+
+
     public String getLabel() {
         return label;
     }

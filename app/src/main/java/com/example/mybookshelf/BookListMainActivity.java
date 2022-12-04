@@ -86,8 +86,30 @@ private ActivityResultLauncher<Intent> updateResultLauncher=registerForActivityR
         if(null!=result&&result.getResultCode()==BookEditActivity.RESULT_CODE_OK){
             Bundle bundle=intent.getExtras();
             int position=bundle.getInt("position");
-            picUri = Uri.parse(bundle.getString("imageUri"));
-            Log.d("www", "booklistactivity update: "+picUri.toString());
+            String image=bundle.getString("imageUri");
+            int isuri=bundle.getInt("isuri");
+            if(isuri==1) {
+                picUri = Uri.parse(bundle.getString("imageUri"));
+                books.get(position).setUri(picUri);
+//                books.get(position).setIsUri(1);
+                Log.d("www", "booklistactivity add: "+picUri.toString());
+            }
+//            else{
+////                books.get(position).setIsUri(0);
+//            }
+            books.get(position).setIsUri(isuri);
+//            if(image.isEmpty()){
+//                books.get(position).setResourceid(R.drawable.book_no_name);
+//            }else{
+//                picUri = Uri.parse(bundle.getString("imageUri"));
+//                Log.d("www", "booklistactivity update: "+picUri.toString());
+//                books.get(position).setUri(picUri);
+//            }
+
+
+
+//            picUri = Uri.parse(bundle.getString("imageUri"));
+//            Log.d("www", "booklistactivity update: "+picUri.toString());
             title = bundle.getString("title");
             author = bundle.getString("author");
             publisher = bundle.getString("publisher");
@@ -99,7 +121,7 @@ private ActivityResultLauncher<Intent> updateResultLauncher=registerForActivityR
             readingstatus = bundle.getInt("readingstatus",0);
             note = bundle.getString("note");
             books.get(position).setTitle(title);
-            books.get(position).setUri(picUri);
+//            books.get(position).setUri(picUri);
             books.get(position).setAuthor(author);
             books.get(position).setPublisher(publisher);
             books.get(position).setPutyear(pubyear);
@@ -139,7 +161,12 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             Bundle bundle=intent.getExtras();
 
 //            Uri picUri=intent.getData();
-            picUri = Uri.parse(bundle.getString("imageUri"));
+            int isuri=bundle.getInt("isuri");
+            Log.d("ww", "isuri: "+isuri);
+            if(isuri==1) {
+                picUri = Uri.parse(bundle.getString("imageUri"));
+                Log.d("www", "booklistactivity add: "+picUri.toString());
+            }
             bitmap = (Bitmap)bundle.getParcelable("image");
             title = bundle.getString("title");
             author = bundle.getString("author");
@@ -152,13 +179,15 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
             readingstatus = bundle.getInt("readingstatus",0);
             note = bundle.getString("note");
             Log.d("wwww", "note: "+note);
+
 //            int position=bundle.getInt("position");
             int position=books.size();
 //            int position=1;
 //            int resourceid=bundle.getInt("image");
             int resourceid=R.drawable.book_1;
-            Log.d("www", "booklistactivity add: "+picUri.toString());
-            books.add(new Book(title, picUri, author, pubyear, pubmonth, publisher, isbn, booklabel,readingstatus,note));
+
+            books.add(new Book(title, picUri, author, pubyear, pubmonth, publisher, isbn, booklabel,readingstatus,note,isuri));
+
             new DataSaver().save(BookListMainActivity.this,books);
             adapter.notifyItemInserted(position);
 //                books.get(position).setTitle(title);
@@ -167,6 +196,7 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
         }
     }
 });
+
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private AdapterView.OnItemClickListener mOnItemClickListener;
@@ -448,6 +478,8 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
     public void bookClick(View view) {
         int position = recyclerView.getChildAdapterPosition(view);
         Intent intent=new Intent(BookListMainActivity.this,BookDetailActivity.class);
+        intent.addCategory(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putStringArrayListExtra("label",labels);
         String pubtime=books.get(position).getPutyear()+"-"+books.get(position).getPutmonth();
         Bundle bundle=new Bundle();
@@ -459,6 +491,8 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
         bundle.putString("booklabel",books.get(position).getLabel());
         bundle.putInt("readingstatus",books.get(position).getReadingStatus());
         bundle.putString("note",books.get(position).getNote());
+
+//        bundle.putString("image",books.get(position).getUri().toString());
 
         intent.putExtras(bundle);
         startActivity(intent);
@@ -551,7 +585,17 @@ private ActivityResultLauncher<Intent> addResultLauncher=registerForActivityResu
         @Override
         public void onBindViewHolder(@NonNull BookAdapter.ViewHolder holder, int position) {
 //            holder.getImageView().setImageResource(localDataSet.get(position).getResourceid());
-            holder.getImageView().setImageURI(localDataSet.get(position).getUri());
+//            if(localDataSet.get(position).getUri().toString().isEmpty()){
+//                holder.getImageView().setImageResource(R.drawable.book_no_name);
+//            }else{
+//                holder.getImageView().setImageURI(localDataSet.get(position).getUri());
+//            }
+            Log.d("www", "onBindViewHolder: "+localDataSet.get(position).getIsUri());
+            if(localDataSet.get(position).getIsUri()==1) {
+                holder.getImageView().setImageURI(localDataSet.get(position).getUri());
+            }else{
+                holder.getImageView().setImageResource(R.drawable.book_no_name);
+            }
 //            holder.getImageView().setImageBitmap(localDataSet.get(position).getBitmap());
             holder.getTitleview().setText(localDataSet.get(position).getTitle());
             holder.getAuthorview().setText(localDataSet.get(position).getAuthor());
